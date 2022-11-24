@@ -1,4 +1,5 @@
-﻿using ETİcaretAPI.Application.Repositories;
+﻿using ETİcaretAPI.Application.Abstraction.Storage;
+using ETİcaretAPI.Application.Repositories;
 using ETİcaretAPI.Application.Repositories.InvoiceFile;
 using ETİcaretAPI.Application.Repositories.ProductImageFile;
 using ETİcaretAPI.Application.RequestParameters;
@@ -26,10 +27,11 @@ namespace ETicaretAPI.API.Controllers
         readonly IProductImageFileWriteRepository  productImageFileWriteRepository;
         readonly IInvoiceFileWriteRepository ınvoiceFileWriteRepository;
         readonly IInvoiceFileReadRepository ınvoiceFileReadRepository;
+        readonly IStorageService storageService;
 
 
 
-        public ProductsController(IProductImageFileWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IWebHostEnvironment _webHostEnvironment, IFileService fileService, IFileWriteRepository fileWriteRepository, IFileReadRepository fileReadRepository, IProductImageFileReadRepository productImageFileReadRepository, IProductImageFileWriteRepository productImageFileWriteRepository, IInvoiceFileWriteRepository ınvoiceFileWriteRepository, IInvoiceFileReadRepository ınvoiceFileReadRepository)
+        public ProductsController(IProductImageFileWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IWebHostEnvironment _webHostEnvironment, IFileService fileService, IFileWriteRepository fileWriteRepository, IFileReadRepository fileReadRepository, IProductImageFileReadRepository productImageFileReadRepository, IProductImageFileWriteRepository productImageFileWriteRepository, IInvoiceFileWriteRepository ınvoiceFileWriteRepository, IInvoiceFileReadRepository ınvoiceFileReadRepository, IStorageService storageService)
         {
             _productWriteRepository = productWriteRepository;
             _productReadRepository = productReadRepository;
@@ -41,6 +43,7 @@ namespace ETicaretAPI.API.Controllers
             this.productImageFileWriteRepository = productImageFileWriteRepository;
             this.ınvoiceFileWriteRepository = ınvoiceFileWriteRepository;
             this.ınvoiceFileReadRepository = ınvoiceFileReadRepository;
+            this.storageService = storageService;
         }
 
 
@@ -105,14 +108,32 @@ namespace ETicaretAPI.API.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Upload()
         {
-            var datas=await fileService.UploadAsync("resources/product-images", Request.Form.Files);
-            await productImageFileWriteRepository.AddRangeAsync(datas.Select(d=>new ProductImageFile() { 
-                Name=d.fileName,
-                Path=d.path
+
+
+            //fileService ile kullanım 
+
+            //var datas=await fileService.UploadAsync("resources/product-images", Request.Form.Files);
+            //await productImageFileWriteRepository.AddRangeAsync(datas.Select(d=>new ProductImageFile() { 
+            //    Name=d.fileName,
+            //    Path=d.path
+            //}).ToList());
+
+
+            //await productImageFileWriteRepository.SaveAsync();
+
+            //return Ok();
+
+            //-------------------------------------------//
+
+
+          var datas= await storageService.UploadAsync("resource", Request.Form.Files);
+
+            await productImageFileWriteRepository.AddRangeAsync(datas.Select(d => new ProductImageFile()
+            {
+                Name = d.fileName,
+                Path = d.pathOrContainer,
+                Storage= storageService.StorageName
             }).ToList());
-
-
-            await productImageFileWriteRepository.SaveAsync();
 
             return Ok();
         }

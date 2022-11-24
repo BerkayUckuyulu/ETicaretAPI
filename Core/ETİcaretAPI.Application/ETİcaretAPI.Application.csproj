@@ -17,4 +17,9 @@
     <ProjectReference Include="..\ETİcaretAPI.Domain\ETİcaretAPI.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Abstraction\Storage\Azure\" />
+    <Folder Include="Abstraction\Storage\AWS\" />
+  </ItemGroup>
+
 </Project>

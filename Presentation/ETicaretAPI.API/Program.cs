@@ -1,5 +1,6 @@
 using ETicaretAPI.Infrastructure;
 using ETicaretAPI.Infrastructure.Filters;
+using ETicaretAPI.Infrastructure.Services.Storage.Local;
 using ETicaretAPI.Persistance;
 using ETicaretAPI.Persistance.Contexts;
 using ETÝcaretAPI.Application.Validators.Products;
@@ -11,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddPersistenceServices();
 builder.Services.AddInfrastructureServices();
+
+builder.Services.AddStorage<LocalStorage>();
 
 
 //builder.Services.AddCors(options=>options.AddDefaultPolicy(policy=> policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin()));
