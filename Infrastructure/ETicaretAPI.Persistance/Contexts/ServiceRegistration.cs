@@ -31,7 +31,7 @@ namespace ETicaretAPI.Persistance.Contexts
             services.AddScoped<IOrderWriteRepository, OrderWriteRepository>();
 
             services.AddScoped<IProductReadRepository, ProductReadRepository>();
-            services.AddScoped<IProductImageFileWriteRepository, ProductWriteRepository>();
+            services.AddScoped<IProductWriteRepository, ProductWriteRepository>();
 
 
 

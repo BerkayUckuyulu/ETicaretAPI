@@ -13,6 +13,14 @@
   <ItemGroup>
     <Folder Include="Services\Storage\AWS\" />
     <Folder Include="Services\Storage\Azure\" />
+    <Folder Include="Enums\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Azure.Storage.Blobs" />
+    <None Remove="Enums\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
+  </ItemGroup>
 </Project>

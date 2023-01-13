@@ -25,7 +25,7 @@ namespace ETicaretAPI.Persistance.Repositories
 
         public async Task<bool> AddAsync(T model)
         {
-           EntityEntry<T> entityEntry= await Table.AddAsync(model);
+            EntityEntry<T> entityEntry = await Table.AddAsync(model);         
             return entityEntry.State == EntityState.Added;
         }
 

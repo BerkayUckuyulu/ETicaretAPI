@@ -16,4 +16,5 @@ namespace ETİcaretAPI.Domain
         public ICollection<Order> Orders { get; set; }
 
     }
+
 }

@@ -38,9 +38,6 @@ namespace ETicaretAPI.Persistance.Contexts
                     EntityState.Modified => data.Entity.UpdatedDate = DateTime.UtcNow,
                     _=> DateTime.UtcNow
                 };
-           
-
-
             }
 
             return base.SaveChangesAsync(cancellationToken);

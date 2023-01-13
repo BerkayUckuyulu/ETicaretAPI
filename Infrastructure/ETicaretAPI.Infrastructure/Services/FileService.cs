@@ -101,8 +101,6 @@ namespace ETicaretAPI.Infrastructure.Services
             //todo uyarıcı bir exception oluşturulacak.
             return null;
 
-           
-
         }
 
 

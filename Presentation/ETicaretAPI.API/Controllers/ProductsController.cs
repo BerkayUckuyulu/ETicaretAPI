@@ -17,7 +17,7 @@ namespace ETicaretAPI.API.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly IProductImageFileWriteRepository _productWriteRepository;
+         readonly IProductWriteRepository _productWriteRepository;
         private readonly IProductReadRepository _productReadRepository;
         private readonly IWebHostEnvironment webHostEnvironment;
         private readonly IFileService fileService;
@@ -31,10 +31,10 @@ namespace ETicaretAPI.API.Controllers
 
 
 
-        public ProductsController(IProductImageFileWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IWebHostEnvironment _webHostEnvironment, IFileService fileService, IFileWriteRepository fileWriteRepository, IFileReadRepository fileReadRepository, IProductImageFileReadRepository productImageFileReadRepository, IProductImageFileWriteRepository productImageFileWriteRepository, IInvoiceFileWriteRepository ınvoiceFileWriteRepository, IInvoiceFileReadRepository ınvoiceFileReadRepository, IStorageService storageService)
+        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IWebHostEnvironment _webHostEnvironment, IFileService fileService, IFileWriteRepository fileWriteRepository, IFileReadRepository fileReadRepository, IProductImageFileReadRepository productImageFileReadRepository, IProductImageFileWriteRepository productImageFileWriteRepository, IInvoiceFileWriteRepository ınvoiceFileWriteRepository, IInvoiceFileReadRepository ınvoiceFileReadRepository, IStorageService storageService)
         {
-            _productWriteRepository = productWriteRepository;
-            _productReadRepository = productReadRepository;
+            this._productWriteRepository = productWriteRepository;
+            this._productReadRepository = productReadRepository;
             this.webHostEnvironment = _webHostEnvironment;
             this.fileService = fileService;
             this.fileWriteRepository = fileWriteRepository;
@@ -73,14 +73,27 @@ namespace ETicaretAPI.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(VM_Create_Product model)
         {
-            await _productWriteRepository.AddAsync(new()
+            if (ModelState.IsValid)
             {
-                Name = model.Name,
-              
-                
-            });
-            await _productWriteRepository.SaveAsync();
-            return StatusCode((int)HttpStatusCode.Created);
+                var result=await _productWriteRepository.AddAsync(new()
+                {
+                    Name = model.Name,
+                    Price = model.Price,
+                    Stock = model.Stock
+
+
+                });
+
+
+                var data=await _productWriteRepository.SaveAsync();
+                return StatusCode((int)HttpStatusCode.Created);
+            }
+            else
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError);
+            }
+
+         
         }
 
         [HttpPut]
