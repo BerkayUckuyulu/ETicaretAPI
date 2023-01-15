@@ -8,6 +8,6 @@ namespace ETİcaretAPI.Domain.File
 {
     public class ProductImageFile:File
     {
-      
+        public ICollection<Product> Products { get; set; }
     }
 }

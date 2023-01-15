@@ -1,4 +1,5 @@
 ﻿using ETİcaretAPI.Domain.Common;
+using ETİcaretAPI.Domain.File;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,8 @@ namespace ETİcaretAPI.Domain
         public float Price { get; set; }
 
         public ICollection<Order> Orders { get; set; }
+        public ICollection<ProductImageFile> ProductImageFiles { get; set; }
+
 
     }
 

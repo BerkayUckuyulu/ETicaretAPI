@@ -119,36 +119,24 @@ namespace ETicaretAPI.API.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Upload()
+        public async Task<IActionResult> Upload(string id)
         {
 
+            List<(string fileName,string pathOrContainerName)> result= await storageService.UploadAsync("photo-images", Request.Form.Files);
 
-            //fileService ile kullanım 
+            Product product =await _productReadRepository.GetByIdAsync(id);
 
-            //var datas=await fileService.UploadAsync("resources/product-images", Request.Form.Files);
-            //await productImageFileWriteRepository.AddRangeAsync(datas.Select(d=>new ProductImageFile() { 
-            //    Name=d.fileName,
-            //    Path=d.path
-            //}).ToList());
-
-
-            //await productImageFileWriteRepository.SaveAsync();
-
-            //return Ok();
-
-            //-------------------------------------------//
-
-
-          var datas= await storageService.UploadAsync("resource", Request.Form.Files);
-
-            await productImageFileWriteRepository.AddRangeAsync(datas.Select(d => new ProductImageFile()
+            await productImageFileWriteRepository.AddRangeAsync(result.Select(x => new ProductImageFile()
             {
-                Name = d.fileName,
-                Path = d.pathOrContainer,
-                Storage= storageService.StorageName
+                Name = x.fileName,
+                Path = x.pathOrContainerName,
+                Storage =storageService.StorageName,
+                Products=new List<Product>() { product}
             }).ToList());
 
+            await _productWriteRepository.SaveAsync();
             return Ok();
+           
         }
     }
 }
