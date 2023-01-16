@@ -9,6 +9,7 @@ using ETİcaretAPI.Domain;
 using ETİcaretAPI.Domain.File;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 
 namespace ETicaretAPI.API.Controllers
@@ -17,21 +18,22 @@ namespace ETicaretAPI.API.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-         readonly IProductWriteRepository _productWriteRepository;
+        readonly IProductWriteRepository _productWriteRepository;
         private readonly IProductReadRepository _productReadRepository;
         private readonly IWebHostEnvironment webHostEnvironment;
         private readonly IFileService fileService;
         readonly IFileWriteRepository fileWriteRepository;
         readonly IFileReadRepository fileReadRepository;
-        readonly IProductImageFileReadRepository  productImageFileReadRepository;
-        readonly IProductImageFileWriteRepository  productImageFileWriteRepository;
+        readonly IProductImageFileReadRepository productImageFileReadRepository;
+        readonly IProductImageFileWriteRepository productImageFileWriteRepository;
         readonly IInvoiceFileWriteRepository ınvoiceFileWriteRepository;
         readonly IInvoiceFileReadRepository ınvoiceFileReadRepository;
         readonly IStorageService storageService;
+        readonly IConfiguration _configuration;
 
 
 
-        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IWebHostEnvironment _webHostEnvironment, IFileService fileService, IFileWriteRepository fileWriteRepository, IFileReadRepository fileReadRepository, IProductImageFileReadRepository productImageFileReadRepository, IProductImageFileWriteRepository productImageFileWriteRepository, IInvoiceFileWriteRepository ınvoiceFileWriteRepository, IInvoiceFileReadRepository ınvoiceFileReadRepository, IStorageService storageService)
+        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IWebHostEnvironment _webHostEnvironment, IFileService fileService, IFileWriteRepository fileWriteRepository, IFileReadRepository fileReadRepository, IProductImageFileReadRepository productImageFileReadRepository, IProductImageFileWriteRepository productImageFileWriteRepository, IInvoiceFileWriteRepository ınvoiceFileWriteRepository, IInvoiceFileReadRepository ınvoiceFileReadRepository, IStorageService storageService, IConfiguration configuration)
         {
             this._productWriteRepository = productWriteRepository;
             this._productReadRepository = productReadRepository;
@@ -44,11 +46,12 @@ namespace ETicaretAPI.API.Controllers
             this.ınvoiceFileWriteRepository = ınvoiceFileWriteRepository;
             this.ınvoiceFileReadRepository = ınvoiceFileReadRepository;
             this.storageService = storageService;
+            _configuration = configuration;
         }
 
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery]Pagination pagination)
+        public async Task<IActionResult> Get([FromQuery] Pagination pagination)
         {
             var totalCount = _productReadRepository.GetAll(false).Count();
             var products = _productReadRepository.GetAll(false).Select(p => new
@@ -61,7 +64,7 @@ namespace ETicaretAPI.API.Controllers
                 p.Price
             }).Skip(pagination.Page * pagination.Size).Take(pagination.Size);
 
-            return Ok(new { totalCount,products });
+            return Ok(new { totalCount, products });
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
@@ -75,7 +78,7 @@ namespace ETicaretAPI.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result=await _productWriteRepository.AddAsync(new()
+                var result = await _productWriteRepository.AddAsync(new()
                 {
                     Name = model.Name,
                     Price = model.Price,
@@ -85,7 +88,7 @@ namespace ETicaretAPI.API.Controllers
                 });
 
 
-                var data=await _productWriteRepository.SaveAsync();
+                var data = await _productWriteRepository.SaveAsync();
                 return StatusCode((int)HttpStatusCode.Created);
             }
             else
@@ -93,7 +96,7 @@ namespace ETicaretAPI.API.Controllers
                 return StatusCode((int)HttpStatusCode.InternalServerError);
             }
 
-         
+
         }
 
         [HttpPut]
@@ -122,21 +125,44 @@ namespace ETicaretAPI.API.Controllers
         public async Task<IActionResult> Upload(string id)
         {
 
-            List<(string fileName,string pathOrContainerName)> result= await storageService.UploadAsync("photo-images", Request.Form.Files);
+            List<(string fileName, string pathOrContainerName)> result = await storageService.UploadAsync("photo-images", Request.Form.Files);
 
-            Product product =await _productReadRepository.GetByIdAsync(id);
+            Product product = await _productReadRepository.GetByIdAsync(id);
 
-            await productImageFileWriteRepository.AddRangeAsync(result.Select(x => new ProductImageFile()
+            var result2 = await productImageFileWriteRepository.AddRangeAsync(result.Select(x => new ProductImageFile()
             {
                 Name = x.fileName,
                 Path = x.pathOrContainerName,
-                Storage =storageService.StorageName,
-                Products=new List<Product>() { product}
+                Storage = storageService.StorageName,
+                Products = new List<Product>() { product }
             }).ToList());
 
             await _productWriteRepository.SaveAsync();
             return Ok();
-           
+
+        }
+
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetProductImages(string id)
+        {
+            Product? product = await _productReadRepository.Table.Include(p => p.ProductImageFiles).FirstOrDefaultAsync(p => p.Id == Guid.Parse(id));
+            return Ok(product.ProductImageFiles.Select(p => new
+            {
+                Path = $"{_configuration["BaseStorageUrl"]}/{p.Path}",
+                p.Name,
+                p.Id
+            }));
+        }
+        [HttpDelete("[action]/{productId}")]
+        public async Task<IActionResult> DeleteImage(string productId, string imageId)
+        {
+            Product? product = await _productReadRepository.Table.Include(p => p.ProductImageFiles).FirstOrDefaultAsync(p => p.Id == Guid.Parse(productId));
+
+            var productImage = product.ProductImageFiles.FirstOrDefault(x => x.Id == Guid.Parse(imageId));
+            product.ProductImageFiles.Remove(productImage);
+            await _productWriteRepository.SaveAsync();
+            return Ok();
+
         }
     }
 }
