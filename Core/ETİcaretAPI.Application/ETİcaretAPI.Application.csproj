@@ -29,6 +29,8 @@
     <Folder Include="Features\Queries\Product\" />
     <Folder Include="Features\Commands\ProductImageFile\" />
     <Folder Include="Features\Queries\ProductImageFile\" />
+    <Folder Include="Features\Commands\AppUser\" />
+    <Folder Include="Exceptions\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,5 +43,7 @@
     <None Remove="Features\Queries\Product\" />
     <None Remove="Features\Commands\ProductImageFile\" />
     <None Remove="Features\Queries\ProductImageFile\" />
+    <None Remove="Features\Commands\AppUser\" />
+    <None Remove="Exceptions\" />
   </ItemGroup>
 </Project>

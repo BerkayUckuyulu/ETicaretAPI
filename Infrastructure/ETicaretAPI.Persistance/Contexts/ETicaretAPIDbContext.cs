@@ -1,6 +1,7 @@
 ﻿using ETİcaretAPI.Domain;
 using ETİcaretAPI.Domain.Common;
 using ETİcaretAPI.Domain.File;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ETicaretAPI.Persistance.Contexts
 {
-    public class ETicaretAPIDbContext:DbContext
+    public class ETicaretAPIDbContext:IdentityDbContext<AppUser,AppRole,string>
     {
         public ETicaretAPIDbContext(DbContextOptions options):base(options)
         {
