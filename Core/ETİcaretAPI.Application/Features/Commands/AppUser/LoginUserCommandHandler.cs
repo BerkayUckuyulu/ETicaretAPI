@@ -1,4 +1,6 @@
 ﻿using System;
+using ETİcaretAPI.Application.Abstraction.Token;
+using ETİcaretAPI.Application.DTOs;
 using ETİcaretAPI.Application.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -9,11 +11,13 @@ namespace ETİcaretAPI.Application.Features.Commands.AppUser
     {
         readonly UserManager<Domain.AppUser> _userManager;
         readonly SignInManager<Domain.AppUser> _signInManager;
+        readonly ITokenHandler _tokenHandler;
 
-        public LoginUserCommandHandler(UserManager<Domain.AppUser> userManager, SignInManager<Domain.AppUser> signInManager)
+        public LoginUserCommandHandler(UserManager<Domain.AppUser> userManager, SignInManager<Domain.AppUser> signInManager, ITokenHandler tokenHandler)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _tokenHandler = tokenHandler;
         }
 
         public async Task<LoginUserCommandResponse> Handle(LoginUserCommandRequest request, CancellationToken cancellationToken)
@@ -29,10 +33,13 @@ namespace ETİcaretAPI.Application.Features.Commands.AppUser
 
             if (signInResult.Succeeded)
             {
-                ///// Yetkilerin belirlendiği kısım.
+               Token token =_tokenHandler.CreateAccessToken(5);
+                return new LoginUserCommandSuccessResponse() { Token = token };
+
             }
 
-            return new();
+            throw new AuthenticationErrorException();
+            //return new LoginUserCommandErrorResponse() { Message="Kullanıcı adı veya şifre hatalıdır."};
         }
     }
 
@@ -45,6 +52,14 @@ namespace ETİcaretAPI.Application.Features.Commands.AppUser
     public class LoginUserCommandResponse
     {
 
+    }
+    public class LoginUserCommandSuccessResponse:LoginUserCommandResponse
+    {
+        public Token Token { get; set; }
+    }
+    public class LoginUserCommandErrorResponse:LoginUserCommandResponse
+    {
+        public string Message { get; set; }
     }
 }
 

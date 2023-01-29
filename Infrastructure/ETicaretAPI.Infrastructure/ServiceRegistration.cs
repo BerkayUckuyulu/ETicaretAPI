@@ -3,7 +3,9 @@ using ETicaretAPI.Infrastructure.Services;
 using ETicaretAPI.Infrastructure.Services.Storage;
 using ETicaretAPI.Infrastructure.Services.Storage.Azure;
 using ETicaretAPI.Infrastructure.Services.Storage.Local;
+using ETicaretAPI.Infrastructure.Services.Token;
 using ETİcaretAPI.Application.Abstraction.Storage;
+using ETİcaretAPI.Application.Abstraction.Token;
 using ETİcaretAPI.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -21,6 +23,7 @@ namespace ETicaretAPI.Infrastructure
             serviceCollection.AddScoped<IFileService, FileService>();
 
             serviceCollection.AddScoped<IStorageService, StorageService>();
+            serviceCollection.AddScoped<ITokenHandler, TokenHandler>();
         }
 
         public static void AddStorage<T>(this IServiceCollection serviceCollection) where T:Storage,IStorage

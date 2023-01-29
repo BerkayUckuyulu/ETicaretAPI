@@ -31,6 +31,8 @@
     <Folder Include="Features\Queries\ProductImageFile\" />
     <Folder Include="Features\Commands\AppUser\" />
     <Folder Include="Exceptions\" />
+    <Folder Include="Abstraction\Token\" />
+    <Folder Include="DTOs\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,5 +47,7 @@
     <None Remove="Features\Queries\ProductImageFile\" />
     <None Remove="Features\Commands\AppUser\" />
     <None Remove="Exceptions\" />
+    <None Remove="Abstraction\Token\" />
+    <None Remove="DTOs\" />
   </ItemGroup>
 </Project>

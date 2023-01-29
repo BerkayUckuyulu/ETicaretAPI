@@ -14,13 +14,17 @@
     <Folder Include="Services\Storage\AWS\" />
     <Folder Include="Services\Storage\Azure\" />
     <Folder Include="Enums\" />
+    <Folder Include="Services\Token\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Azure.Storage.Blobs" />
     <None Remove="Enums\" />
+    <None Remove="Services\Token\" />
+    <None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.5" />
   </ItemGroup>
 </Project>
