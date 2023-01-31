@@ -14,6 +14,8 @@ using ETİcaretAPI.Application.Repositories.ProductImageFile;
 using ETİcaretAPI.Application.Repositories.InvoiceFile;
 using ETicaretAPI.Persistance.Repositories.InvoiceFile;
 using ETİcaretAPI.Domain;
+using ETİcaretAPI.Application.Abstraction.Services;
+using ETicaretAPI.Persistance.Services;
 
 namespace ETicaretAPI.Persistance.Contexts
 {
@@ -57,6 +59,9 @@ namespace ETicaretAPI.Persistance.Contexts
 
             services.AddScoped<IInvoiceFileWriteRepository, InvoiceFileWriteRepository>();
             services.AddScoped<IInvoiceFileReadRepository, InvoiceFileReadRepository>();
+
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAuthService, AuthService>();
 
 
 

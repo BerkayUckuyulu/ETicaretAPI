@@ -1,4 +1,6 @@
 ﻿using System;
+using ETİcaretAPI.Application.Abstraction.Services;
+using ETİcaretAPI.Application.DTOs;
 using ETİcaretAPI.Application.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -7,37 +9,23 @@ namespace ETİcaretAPI.Application.Features.Commands.AppUser
 {
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommandRequest, CreateUserCommandResponse>
     {
-        readonly UserManager<Domain.AppUser> _userManager;
+        readonly IUserService _userService;
 
-        public CreateUserCommandHandler(UserManager<Domain.AppUser> userManager)
+        public CreateUserCommandHandler(IUserService userService)
         {
-            _userManager = userManager;
+            _userService = userService;
         }
 
         public async Task<CreateUserCommandResponse> Handle(CreateUserCommandRequest request, CancellationToken cancellationToken)
         {
-            IdentityResult identityResult = await _userManager.CreateAsync(new()
+
+           CreateUserResponseDto createUserResponseDto= await _userService.CreateAsync(new() { Email = request.Email, NameSurname = request.NameSurname, Password = request.Password, PasswordConfirm = request.PasswordConfirm, UserName = request.UserName });
+
+            return new CreateUserCommandResponse()
             {
-                Id=Guid.NewGuid().ToString(),
-                UserName = request.UserName,
-                Email = request.Email,
-                NameSurname = request.NameSurname,
-
-            }, request.Password);
-
-            CreateUserCommandResponse createUserCommandResponse = new() { Succeeded = identityResult.Succeeded };
-
-            if (identityResult.Succeeded)
-                createUserCommandResponse.Message = "Kullanıcı başarı ile oluşturuldu.";
-            else
-            {
-                foreach (var error in identityResult.Errors)
-                {
-                    createUserCommandResponse.Message += $"{error.Code}--{error.Description}\n";
-                }
-            }
-            return createUserCommandResponse;
-
+                Message = createUserResponseDto.Message,
+                Succeeded = createUserResponseDto.Succeeded
+            };
         }
     }
     public class CreateUserCommandRequest : IRequest<CreateUserCommandResponse>

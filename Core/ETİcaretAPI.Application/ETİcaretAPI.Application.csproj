@@ -33,6 +33,7 @@
     <Folder Include="Exceptions\" />
     <Folder Include="Abstraction\Token\" />
     <Folder Include="DTOs\" />
+    <Folder Include="Abstraction\Services\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -49,5 +50,6 @@
     <None Remove="Exceptions\" />
     <None Remove="Abstraction\Token\" />
     <None Remove="DTOs\" />
+    <None Remove="Abstraction\Services\" />
   </ItemGroup>
 </Project>

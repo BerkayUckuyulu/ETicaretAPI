@@ -12,20 +12,19 @@ namespace ETicaretAPI.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class AuthController : ControllerBase
     {
         readonly IMediator _mediator;
 
-        public UsersController(IMediator mediator)
+        public AuthController(IMediator mediator)
         {
             _mediator = mediator;
         }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateUser(CreateUserCommandRequest createUserCommandRequest)
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Login(LoginUserCommandRequest loginUserCommandRequest)
         {
-            CreateUserCommandResponse response = await _mediator.Send(createUserCommandRequest);
-            return Ok(response);
+            LoginUserCommandResponse loginUserCommandResponse = await _mediator.Send(loginUserCommandRequest);
+            return Ok(loginUserCommandResponse);
         }
     }
 }
