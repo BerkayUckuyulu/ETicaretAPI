@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using System.Text;
 using ETicaretAPI.API.Configurations.SeriLogColumnWriters;
+using ETicaretAPI.API.Extensions;
 using ETicaretAPI.Infrastructure;
 using ETicaretAPI.Infrastructure.Filters;
 using ETicaretAPI.Infrastructure.Services.Storage.Azure;
@@ -105,6 +106,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.ConfigureExceptionHandler(app.Services.GetRequiredService<ILogger<Program>>());
 
 app.UseStaticFiles();
 

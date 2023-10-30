@@ -33,11 +33,13 @@
     <Folder Include="wwwroot\" />
     <Folder Include="Configurations\" />
     <Folder Include="Configurations\SeriLogColumnWriters\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <None Remove="Configurations\" />
     <None Remove="Configurations\SeriLogColumnWriters\" />
+    <None Remove="Extensions\" />
   </ItemGroup>
 </Project>

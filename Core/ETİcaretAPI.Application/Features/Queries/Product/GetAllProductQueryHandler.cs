@@ -31,7 +31,6 @@ namespace ETİcaretAPI.Application.Features.Queries.GetAllProduct
             }).Skip(request.Page * request.Size).Take(request.Size).ToList();
 
             _logger.LogInformation("Ürünler Listelendi");
-
             return new()
             {
                 Products = products,
