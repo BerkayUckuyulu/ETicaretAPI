@@ -66,6 +66,6 @@ namespace ETicaretAPI.Persistance.Repositories
                 query = query.AsNoTracking();
             }
             return await query.FirstOrDefaultAsync(data=>data.Id==Guid.Parse(id));
-        }
+        }       
     }
 }

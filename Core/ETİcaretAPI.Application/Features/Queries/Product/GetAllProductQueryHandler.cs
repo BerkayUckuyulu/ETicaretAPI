@@ -2,16 +2,19 @@
 using ETİcaretAPI.Application.Repositories;
 using ETİcaretAPI.Application.RequestParameters;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace ETİcaretAPI.Application.Features.Queries.GetAllProduct
 {
     public class GetAllProductQueryHandler : IRequestHandler<GetAllProductQueryRequest, GetAllProductQueryResponse>
     {
         private readonly IProductReadRepository _productReadRepository;
+        private readonly ILogger<GetAllProductQueryHandler> _logger;
 
-        public GetAllProductQueryHandler(IProductReadRepository productReadRepository)
+        public GetAllProductQueryHandler(IProductReadRepository productReadRepository, ILogger<GetAllProductQueryHandler> logger)
         {
             _productReadRepository = productReadRepository;
+            _logger = logger;
         }
 
         public async Task<GetAllProductQueryResponse> Handle(GetAllProductQueryRequest request, CancellationToken cancellationToken)
@@ -26,6 +29,8 @@ namespace ETİcaretAPI.Application.Features.Queries.GetAllProduct
                 p.Stock,
                 p.Price
             }).Skip(request.Page * request.Size).Take(request.Size).ToList();
+
+            _logger.LogInformation("Ürünler Listelendi");
 
             return new()
             {

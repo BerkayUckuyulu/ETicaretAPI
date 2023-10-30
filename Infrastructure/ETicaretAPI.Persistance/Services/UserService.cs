@@ -1,6 +1,7 @@
 ﻿using System;
 using ETİcaretAPI.Application.Abstraction.Services;
 using ETİcaretAPI.Application.DTOs;
+using ETİcaretAPI.Application.Exceptions;
 using ETİcaretAPI.Application.Features.Commands.AppUser;
 using ETİcaretAPI.Domain;
 using MediatR;
@@ -27,7 +28,7 @@ namespace ETicaretAPI.Persistance.Services
                 NameSurname = createUserDto.NameSurname,
 
             }, createUserDto.Password);
-
+            
             CreateUserResponseDto createUserReponseDto = new() { Succeeded = identityResult.Succeeded };
 
             if (identityResult.Succeeded)
@@ -40,6 +41,20 @@ namespace ETicaretAPI.Persistance.Services
                 }
             }
             return createUserReponseDto;
+        }
+
+        public async Task UpdateRefreshToken(string refreshToken, AppUser appUser, DateTime accessTokenEndDate, int addTimeOnAccesTokenDate)
+        {
+            if (appUser != null)
+            {
+                appUser.RefreshToken = refreshToken;
+                appUser.RefreshTokenEndDate = accessTokenEndDate.AddMinutes(addTimeOnAccesTokenDate);
+
+                await _userManager.UpdateAsync(appUser);
+            }
+            else
+                throw new NotFoundUserExeption();
+
         }
     }
 }

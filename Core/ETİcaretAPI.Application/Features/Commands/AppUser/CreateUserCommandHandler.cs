@@ -4,6 +4,7 @@ using ETİcaretAPI.Application.DTOs;
 using ETİcaretAPI.Application.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 
 namespace ETİcaretAPI.Application.Features.Commands.AppUser
 {
@@ -18,7 +19,6 @@ namespace ETİcaretAPI.Application.Features.Commands.AppUser
 
         public async Task<CreateUserCommandResponse> Handle(CreateUserCommandRequest request, CancellationToken cancellationToken)
         {
-
            CreateUserResponseDto createUserResponseDto= await _userService.CreateAsync(new() { Email = request.Email, NameSurname = request.NameSurname, Password = request.Password, PasswordConfirm = request.PasswordConfirm, UserName = request.UserName });
 
             return new CreateUserCommandResponse()

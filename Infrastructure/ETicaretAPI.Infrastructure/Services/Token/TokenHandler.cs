@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using ETİcaretAPI.Application.Abstraction.Token;
+using ETİcaretAPI.Domain;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -16,7 +19,7 @@ namespace ETicaretAPI.Infrastructure.Services.Token
             _configuration = configuration;
         }
 
-        public ETİcaretAPI.Application.DTOs.Token CreateAccessToken(int minute)
+        public ETİcaretAPI.Application.DTOs.Token CreateAccessToken(int minute, AppUser appUser)
         {
             ETİcaretAPI.Application.DTOs.Token token = new();
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]));
@@ -29,15 +32,24 @@ namespace ETicaretAPI.Infrastructure.Services.Token
                 issuer: _configuration["Token:Issuer"],
                 expires: token.Expiration,
                 notBefore: DateTime.UtcNow,
-                
-                signingCredentials: signingCredentials
-                
+                signingCredentials: signingCredentials,
+                claims: new List<Claim> { new(ClaimTypes.Name, appUser.UserName) }
                 );
 
             JwtSecurityTokenHandler tokenHandler = new();
             token.AccessToken = tokenHandler.WriteToken(jwtSecurityToken);
 
+            token.RefreshToken = CreateRefreshToken();
+
             return token;
+        }
+
+        public string CreateRefreshToken()
+        {
+            byte[] number = new byte[32];
+            using RandomNumberGenerator random = RandomNumberGenerator.Create();
+            random.GetBytes(number);
+            return Convert.ToBase64String(number);
         }
     }
 }
